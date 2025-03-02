@@ -1,6 +1,5 @@
 streamlit
-crewai
-crewai_tools
 python-dotenv
 openai
-sqlite3 >= 3.35.0
+crewai
+crewai_tools
