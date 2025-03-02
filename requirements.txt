@@ -3,4 +3,4 @@ python-dotenv
 openai
 crewai
 crewai_tools
-pysqlite3-binary
+sqlean.py==0.22.1
