@@ -1,3 +1,7 @@
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 from crewai import Crew, LLM
 from agents import travel_researcher, itinerary_planner, local_expert
 from tasks import research_task, itinerary_task, local_expert_task
@@ -8,14 +12,13 @@ from dotenv import load_dotenv
 import datetime
 import io
 import contextlib
-import sqlean as sqlite3
+
 
 
 def load_environment_variables():
     """Loads environment variables from a .env file."""
     load_dotenv()
-    os.environ['GROQ_API_KEY'] = os.getenv('GROQ_API_KEY')
-    os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY2')  # Keep this for CrewAI
+    os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY2')
 
 def run_crew(destination, start_date, end_date, interests, question):
     """Runs the CrewAI crew with the given inputs."""
@@ -137,7 +140,7 @@ def main():
                 with st.spinner("Planning your itinerary..."):
                     image_url = generate_image(destination)
                     if image_url:
-                        st.image(image_url, caption=f"Image of {destination}")
+                        st.image(image_url, caption=f"AI generated image of {destination}")
 
                     captured_output = io.StringIO()
                     with contextlib.redirect_stdout(captured_output):

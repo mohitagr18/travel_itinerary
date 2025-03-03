@@ -1,6 +1,14 @@
+#streamlit
+#python-dotenv
+#openai
+#crewai
+#crewai_tools
+
 streamlit
 python-dotenv
 openai
 crewai
 crewai_tools
-sqlean.py==0.22.1
+pysqlite3-binary>=0.5.1
+langchain>=0.1.0
+langchain-openai>=0.0.2
