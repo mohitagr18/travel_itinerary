@@ -1,12 +1,19 @@
 from crewai import Task
 from agents import travel_researcher, itinerary_planner, local_expert
+from crewai_tools import SerperDevTool, ScrapeWebsiteTool
+
+# Define your tools.  For this example, we're just using DuckDuckGo Search.
+search_tool = SerperDevTool()
+scrape_tool = ScrapeWebsiteTool()
 
 # --- Tasks (using f-strings) ---
 research_task = Task(
     description=f"""Research the best attractions, restaurants, and activities in {{destination}}.
     Consider the user's interests: {{interests}}. Focus on providing a diverse range of options.
     """,
+    tools=[search_tool, scrape_tool],
     agent=travel_researcher,
+    async_execution=True,
     expected_output="A list of attractions, restaurants, and activities.",
 )
 
@@ -49,12 +56,15 @@ itinerary_task = Task(
     Consider travel times. Be realistic. Prioritize activities for {{interests}}.
     """,
     agent=itinerary_planner,
+    context=[research_task],
     expected_output="A detailed, well-formatted, day-by-day itinerary with recommendations.",
 )
 
 
 local_expert_task = Task(
     description=f"""Answer specific questions about the travel destination: {{destination}} and question: {{question}}""",
+    tools=[search_tool, scrape_tool],
     agent=local_expert,
+    # async_execution=True,
     expected_output="A detailed answer."
 )

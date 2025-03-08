@@ -19,12 +19,14 @@ def load_environment_variables():
     """Loads environment variables from a .env file."""
     load_dotenv()
     os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY2')
+    os.environ['SERPER_API_KEY'] = os.getenv('SERPER_API_KEY')
 
 def run_crew(destination, start_date, end_date, interests, question):
     """Runs the CrewAI crew with the given inputs."""
     crew = Crew(
         agents=[travel_researcher, itinerary_planner, local_expert],
         tasks=[research_task, itinerary_task, local_expert_task],
+        full_output=True,
         verbose=True
     )
     start_date_str = start_date.strftime("%Y-%m-%d") if start_date else ""
@@ -39,6 +41,7 @@ def run_crew(destination, start_date, end_date, interests, question):
             "question": question
         }
     )
+    print(results.tasks_output)
     return results
 
 def get_user_inputs():
@@ -48,7 +51,7 @@ def get_user_inputs():
         destination = st.text_input("Destination:")
         interests = st.text_area("Interests (optional):", placeholder="e.g., hiking, food, museums")
         question = st.text_input("Ask a local expert (optional):", placeholder="e.g., vegetarian options")
-    with col2:
+    with col2: 
         today = datetime.date.today()
         start_date = st.date_input("Start Date", min_value=today, value=today)
         end_date = st.date_input("End Date", min_value=start_date or today, value=start_date or today)
@@ -59,11 +62,14 @@ def display_results(results):
     if results:
         st.markdown("## Itinerary and Recommendations")
         for task_result in results.tasks_output:
-            if task_result.agent == itinerary_planner.role:
-                st.markdown(task_result.raw)
-            if task_result.agent == local_expert.role and st.session_state.get('question'): #Use session
+            print(task_result)
+            if task_result.agent == "Itinerary Planner":
+                output = task_result.raw or task_result.content
+                st.markdown(output)
+            if task_result.agent == "Local Expert" and st.session_state.get('question'): #Use session
                 st.subheader("Local Expert's Answer:")
-                st.markdown(task_result.raw)
+                output = task_result.raw or task_result.content
+                st.markdown(output)
 
 def display_thought_process(captured_output):
     """Displays the captured agent thought process."""
@@ -138,9 +144,9 @@ def main():
         if not st.session_state['submit_disabled']:
             if destination and start_date and end_date:
                 with st.spinner("Planning your itinerary..."):
-                    image_url = generate_image(destination)
-                    if image_url:
-                        st.image(image_url, caption=f"AI generated image of {destination}")
+                    # image_url = generate_image(destination)
+                    # if image_url:
+                    #     st.image(image_url, caption=f"AI generated image of {destination}")
 
                     captured_output = io.StringIO()
                     with contextlib.redirect_stdout(captured_output):
