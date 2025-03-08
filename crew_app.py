@@ -144,9 +144,9 @@ def main():
         if not st.session_state['submit_disabled']:
             if destination and start_date and end_date:
                 with st.spinner("Planning your itinerary..."):
-                    # image_url = generate_image(destination)
-                    # if image_url:
-                    #     st.image(image_url, caption=f"AI generated image of {destination}")
+                    image_url = generate_image(destination)
+                    if image_url:
+                        st.image(image_url, caption=f"AI generated image of {destination}")
 
                     captured_output = io.StringIO()
                     with contextlib.redirect_stdout(captured_output):
